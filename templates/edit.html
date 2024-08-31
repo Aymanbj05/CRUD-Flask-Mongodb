@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h2>Edit Book</h2>
+    <form method="post">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ book.title }}" required>
+        </div>
+        <div class="form-group">
+            <label for="author_name">Author Name</label>
+            {% set author = authors | selectattr('idAuthor', 'equalto', book.author_id) | first %}
+            <input type="text" class="form-control" id="author_name" name="author_name" value="{{ author.name if author else '' }}" required>
+            <input type="hidden" id="author_id" name="author_id" value="{{ book.author_id }}">
+        </div>
+        <div class="form-group">
+            <label for="author_email">Author Email</label>
+            <input type="email" class="form-control" id="author_email" name="author_email" value="{{ author.email if author else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="category_name">Category</label>
+            {% set category = categories | selectattr('idCategory', 'equalto', book.category_id) | first %}
+            <input type="text" class="form-control" id="category_name" name="category_name" value="{{ category.name if category else '' }}" required>
+            <input type="hidden" id="category_id" name="category_id" value="{{ book.category_id }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+</body>
+</html>

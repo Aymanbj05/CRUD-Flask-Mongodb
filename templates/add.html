@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add a New Book</h1>
+        <form action="/add_book" method="post">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="author">Author:</label>
+                <input type="text" id="author" name="author" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Author Email:</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Book</button>
+        </form>
+    </div>
+</body>
+</html>
