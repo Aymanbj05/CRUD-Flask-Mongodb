@@ -32,6 +32,23 @@ def test_db_connection():
         return "Database connection is working!"
     except Exception as e:
         return f"An error occurred: {e}"
+    
+def login():
+    error = None
+    if request.method == 'POST':
+        session['password'] = request.form['password']
+        session['username'] = request.form['username']
+
+        user = db.users.find_one({"username": session['username']})
+
+        if user is None or not check_password_hash(user['password_hash'], session['password']):
+            error = 'Incorrect username or password. Please try again.'
+        else:
+            session['username'] = user['username']
+            return redirect(url_for('index'))
+
+    return render_template('login.html', error=error)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
