@@ -74,5 +74,46 @@ def register():
 
     return render_template('register.html', error=error)
 
+@app.route('/')
+def index():
+    if 'username' in session and 'password' in session:
+        current_user = db.users.find_one({"username": session['username']})
+
+        books = db.books.aggregate([
+            {
+                '$match': {
+                    'user_id': current_user['_id']
+                }
+            },
+            {
+                '$lookup': {
+                    'from': 'authors',
+                    'localField': 'author_id',
+                    'foreignField': '_id',
+                    'as': 'author'
+                }
+            },
+            {
+                '$lookup': {
+                    'from': 'categories',
+                    'localField': 'category_id',
+                    'foreignField': '_id',
+                    'as': 'category'
+                }
+            },
+            {
+                '$unwind': '$author'
+            },
+            {
+                '$unwind': '$category'
+            }
+        ])
+
+        books_list = list(books)
+
+        return render_template('index.html', books=books_list)
+
+    return redirect(url_for('login'))
+
 if __name__ == '__main__':
     app.run(debug=True)
