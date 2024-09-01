@@ -32,7 +32,8 @@ def test_db_connection():
         return "Database connection is working!"
     except Exception as e:
         return f"An error occurred: {e}"
-    
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
