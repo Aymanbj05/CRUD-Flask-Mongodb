@@ -116,5 +116,56 @@ def index():
 
     return redirect(url_for('login'))
 
+
+@app.route('/add_book', methods=['GET', 'POST'])
+def add_book():
+    if 'username' in session:
+        current_user = db.users.find_one({"username": session['username']})
+        if request.method == 'POST':
+            title = request.form['title']
+            author_name = request.form['author']
+            author_email = request.form['email']
+            category_name = request.form['category']
+
+            # Check if the author already exists
+            author = db.authors.find_one({"email": author_email})
+            if not author:
+                author = {
+                    "name": author_name,
+                    "email": author_email
+                }
+                db.authors.insert_one(author)
+                author_id = author['_id']
+            else:
+                author_id = author['_id']
+
+            # Check if the category already exists
+            category = db.categories.find_one({"name": category_name})
+            if not category:
+                category = {
+                    "name": category_name
+                }
+                db.categories.insert_one(category)
+                category_id = category['_id']
+            else:
+                category_id = category['_id']
+
+            # Create the new book
+            new_book = {
+                "title": title,
+                "author_id": author_id,
+                "category_id": category_id,
+                "user_id": current_user['_id']
+            }
+            db.books.insert_one(new_book)
+
+            return redirect(url_for('index'))
+
+        elif request.method == 'GET':
+            authors = list(db.authors.find())
+            categories = list(db.categories.find())
+            return render_template('add.html', authors=authors, categories=categories)
+    return redirect(url_for('login'))
+
 if __name__ == '__main__':
     app.run(debug=True)
