@@ -211,5 +211,11 @@ def edit_book(id):
 
     return render_template('edit.html', book=book, authors=authors, categories=categories)
 
+
+@app.route('/delete_book/<id>', methods=['POST'])
+def delete_book(id):
+    db.books.delete_one({"_id": ObjectId(id)})
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run(debug=True)
