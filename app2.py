@@ -167,5 +167,49 @@ def add_book():
             return render_template('add.html', authors=authors, categories=categories)
     return redirect(url_for('login'))
 
+
+@app.route('/edit_book/<id>', methods=['GET', 'POST'])
+def edit_book(id):
+    book = db.books.find_one({"_id": ObjectId(id)})  # Récupère le livre avec l'ID donné
+    if request.method == 'POST':
+        # Récupère les valeurs du formulaire
+        title = request.form.get('title')
+        author_name = request.form.get('author_name')
+        author_email = request.form.get('author_email')
+        category_name = request.form.get('category_name')
+
+        # Cherche l'auteur existant ou crée un nouveau
+        author = db.authors.find_one({"email": author_email})
+        if not author:
+            author = {
+                "name": author_name,
+                "email": author_email
+            }
+            db.authors.insert_one(author)
+
+        # Cherche la catégorie existante ou crée une nouvelle
+        category = db.categories.find_one({"name": category_name})
+        if not category:
+            category = {
+                "name": category_name
+            }
+            db.categories.insert_one(category)
+
+        # Met à jour le livre
+        updated_book = {
+            "title": title,
+            "author_id": author['_id'],
+            "category_id": category['_id']
+        }
+        db.books.update_one({"_id": ObjectId(id)}, {"$set": updated_book})
+
+        return redirect(url_for('index'))
+
+    # Récupère les données pour pré-remplir le formulaire
+    authors = db.authors.find()
+    categories = db.categories.find()
+
+    return render_template('edit.html', book=book, authors=authors, categories=categories)
+
 if __name__ == '__main__':
     app.run(debug=True)
