@@ -50,6 +50,12 @@ def login():
 
     return render_template('login.html', error=error)
 
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('username', None)
+    session.pop('password', None)
+    return redirect(url_for('login'))
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
